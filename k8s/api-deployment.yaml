@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: api
+  template:
+    metadata:
+      labels:
+        component: api
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: api-container
+          image: kamalmanchanda/dockerpoc:api
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: FLASK_APP
+              value: project/main.py
+            - name: FLASK_ENV
+              value: production 
+            - name: POSTGRES_HOST
+              value: db-cluster-ip-service
+            - name: POSTGRES_DB
+              value: pocdb
+            - name: POSTGRES_USER
+              value: pocuser
+            - name: POSTGRES_PASSWORD
+              value: poc123

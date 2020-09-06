@@ -1,0 +1,5 @@
+FROM postgres:13-alpine
+
+ENV POSTGRES_DB=pocdb POSTGRES_USER=pocuser POSTGRES_PASSWORD=poc123
+
+COPY *.sql /docker-entrypoint-initdb.d/

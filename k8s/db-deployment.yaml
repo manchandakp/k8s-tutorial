@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: db
+  template:
+    metadata:
+      labels:
+        component: db
+    spec:
+      containers:
+        - name: db-container
+          image: kamalmanchanda/dockerpoc:db
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: pocdb
+            - name: POSTGRES_USER
+              value: pocuser
+            - name: POSTGRES_PASSWORD
+              value: poc123
+      imagePullSecrets:
+        - name: regcred

@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  nginx:
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: kamalmanchanda/dockerpoc:nginx
+    ports:
+      - 80:80
+    depends_on:
+      - frontend
+      - api
+  nginxk8s:
+    build:
+      context: ./nginxk8s
+      dockerfile: Dockerfile
+    image: kamalmanchanda/dockerpoc:nginxk8s
+    ports:
+      - 80:80
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: kamalmanchanda/dockerpoc:frontend
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - api
+      - db
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: kamalmanchanda/dockerpoc:api
+    command: gunicorn --bind 0.0.0.0:5000 manage:app
+    env_file:
+      - ./api/.env
+    depends_on:
+      - db
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    image: kamalmanchanda/dockerpoc:db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./db/.env
+
+volumes:
+  postgres_data:  
